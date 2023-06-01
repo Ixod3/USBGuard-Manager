@@ -1,0 +1,128 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import subprocess
+import qdarkstyle
+from PyQt5.QtWidgets import QFrame, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.zone_popup()
+
+    def zone_popup(self):
+
+        # Déclaration du QGridLayout
+        zone_popup_layout = QGridLayout()
+        self.setLayout(zone_popup_layout)
+
+        # Récupération des IDs, S/N
+        id = sys.argv[1]
+        serial = sys.argv[2]
+
+        # Creation short_serial
+        if len(serial) > 10:
+            serial_short = serial[0:7] + "..."
+        elif len(serial) == 0:
+            serial_short = "None"
+        else:
+            serial_short = serial
+
+        # Déclaration du QGridLayout
+        label_id = QLabel(f"ID : {id}")
+        label_id.setAlignment(Qt.AlignCenter)
+        label_id.setFixedHeight(20)
+
+        label_serial = QLabel(f"SN : {serial_short}")
+        label_serial.setAlignment(Qt.AlignCenter)
+        label_serial.setFixedHeight(20)
+
+        lineedit_desc = QLineEdit("")
+        lineedit_desc.setPlaceholderText("Default")
+
+        button_allow = QPushButton("Allow")
+        button_allow.setFixedSize(120, 25)
+
+        button_tmp = QPushButton("Temporary")
+        button_tmp.setFixedSize(120, 25)
+
+        button_block = QPushButton("Block")
+        button_block.setFixedSize(120, 25)
+
+        # Connection des buttons
+        button_allow.clicked.connect(lambda: self.action_allow(id, serial, lineedit_desc))
+        button_tmp.clicked.connect(lambda: self.action_tmp(id))
+        button_block.clicked.connect(lambda: self.action_block())
+
+        # Positionnement des éléments dans le QGridLayout
+        zone_popup_layout.addWidget(label_id, 0, 0, 1, 3)
+        zone_popup_layout.addWidget(label_serial, 0, 3, 1, 3)
+        zone_popup_layout.addWidget(lineedit_desc, 1, 1, 1, 4)
+        zone_popup_layout.addWidget(button_allow, 2, 0, 1, 2)
+        zone_popup_layout.addWidget(button_tmp, 2, 2, 1, 2)
+        zone_popup_layout.addWidget(button_block, 2, 4, 1, 2)
+
+        # Configuration de la fenêtre
+        self.setWindowTitle('USBGuard-Manager')
+        self.setFixedSize(400, 150)
+        self.move(600, 500)
+        self.show()
+
+    def action_allow(self, id, serial, lineedit_desc):
+#        print (f"ID : {id}")
+#        print (f"Serial : {serial}")
+#        print (f"Description : {description}")
+
+        # Récupération de la description
+        if len(lineedit_desc.text()) > 0:
+            description = lineedit_desc.text()
+        else:
+            description = "Default"
+
+        # Récupération du device
+        device = os.popen(f"sudo usbguard list-devices | grep \"id {id}\" | grep \"serial \\\"{serial}\\\"\"").read()
+        device = device.split(" ",2)[2]
+        device = device.replace("\n","")
+
+        # Ajout du peripherique dans rules.conf
+        f1 = open("/etc/usbguard/rules.conf","a")
+        f1.write(f"allow {device}\n")
+        f1.close()
+
+        # Ajout du peripherique dans desc.conf
+        f2 = open("/etc/usbguard/desc.conf","a")
+        f2.write(f"{id}#&#{serial}#&#{description}\n")
+        f2.close()
+
+        # Suppresion du retour a la ligne
+        os.system(f"sed -i -e '$s/\r$//' /etc/usbguard/rules.conf")
+
+        # Redemarage du service USBGuard
+        os.system(f"sudo systemctl restart usbguard.service")
+
+        # Fermeture de la pop-up
+        app.quit()
+
+    def action_tmp(self, id):
+
+        # Autorisation temporaire USBGuard
+        os.system(f"sudo usbguard allow-device {id}")
+
+        # Fermeture de la pop-up
+        app.quit()
+
+    def action_block(self):
+        
+        # Fermeture de la pop-up
+        app.quit()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
+    window = MainWindow()
+    sys.exit(app.exec_())

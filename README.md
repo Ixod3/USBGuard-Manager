@@ -1,2 +1,3 @@
-# USBGUARD-GTK
-interface graphique USBGUARD
+# USBGuard-Manager
+
+USBGUARD graphical extension
