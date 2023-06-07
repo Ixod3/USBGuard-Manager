@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEMS=="usb", RUN+="/bin/systemd-run --scope /etc/usbguard/usbguard-manager-popup-launch.sh"
+ACTION=="remove", SUBSYSTEMS=="usb", RUN+="/etc/usbguard/usbguard-manager-popup-halt.sh"
