@@ -1,0 +1,758 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import subprocess
+import qdarkstyle
+from PyQt5.QtWidgets import QFrame, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Exemple de fenêtre avec deux zones")
+        self.move(400, 200)
+        self.setFixedSize(700, 360)
+
+        # Création du widget central pour la fenêtre principale
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+
+        # Configuration du layout principal
+        self.main_layout = QVBoxLayout(self.central_widget)
+
+        # Creation du fichier desc.conf
+        init_desc()
+
+        # Configuration des contenu des zones 1 et 2
+        zone_1(self)
+
+        # Zone 2 initial (allow)
+        zone_2_allow(self)
+
+def zone_1(self):
+
+    # Création des boutons pour la zone 1
+    self.button1 = QPushButton("Allow")
+    self.button2 = QPushButton("Temporary")
+    self.button3 = QPushButton("Block")
+        
+    # Configuration des styles pour les boutons
+    hauteur = 25
+    self.button1.setFixedSize(224, hauteur)
+    self.button1.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
+                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
+                               ")
+    self.button2.setFixedSize(223, hauteur)
+    self.button2.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
+                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
+                               ")
+    self.button3.setFixedSize(223, hauteur)
+    self.button3.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
+                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
+                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
+                               ")
+
+    # Déclaration de la zone 2 initial
+    self.zone2_content = QWidget()
+    self.zone2_layout = QGridLayout(self.zone2_content)
+    self.zone2 = QWidget()
+
+    # Action des boutons
+    self.button1.clicked.connect(lambda: zone_2_allow(self))
+    self.button2.clicked.connect(lambda: zone_2_tmp(self))
+    self.button3.clicked.connect(lambda: zone_2_block(self))
+        
+    # Création des layouts pour les zones
+    self.zone1_layout = QHBoxLayout()
+    self.zone1_layout.addWidget(self.button1)
+    self.zone1_layout.addWidget(self.button2)
+    self.zone1_layout.addWidget(self.button3)
+
+    # Ajout d'un espacement horizontal de 10 pixels entre chaque ligne
+    self.zone1_layout.addSpacing(10)
+
+    # Création des widgets pour les zones
+    self.zone1 = QWidget()
+    self.zone1.setLayout(self.zone1_layout)
+
+    # Configuration du layout principal
+    self.main_layout.addWidget(self.zone1)
+
+def zone_2_allow(self):
+
+    # Suppresion de la zone 2 precedente
+    clear_zone_2(self)
+
+    # Activation/deactivation des buttons
+    self.button1.setCheckable(True)
+    self.button1.setChecked(True)
+    self.button2.setCheckable(True)
+    self.button2.setChecked(False)
+    self.button3.setCheckable(True)
+    self.button3.setChecked(False)
+
+    # Création du contenu pour la zone 2
+    self.zone2_content = QWidget()
+    self.zone2_layout = QGridLayout(self.zone2_content)
+
+    # Extraction du nombre de periphérique dans rules.conf
+    files_num = subprocess.check_output(["sudo","wc","-l","/etc/usbguard/rules.conf"])
+    files_num = str(files_num.decode("utf-8"))
+    files_num = int(files_num.split(" ")[0])
+
+    # Déclaration du dict de button
+    self.button_mod_dict = {}
+    self.button_del_dict = {}
+    self.qline_dict = {}
+        
+    # Ajout des lignes et colonnes dans la zone 2
+    for i in range(files_num):
+
+        # Récuperation des numero d'ID
+        f = open('/etc/usbguard/rules.conf')
+        lines = f.readlines()
+        f.close()
+        id = lines[i].split(" ")[2]
+        serial = lines[i].split(" ")[4].replace("\"","")
+
+        # Creation du serial_short si besoin
+        if len(serial) > 10:
+            serial_short = serial[0:10] + "..."
+        elif len(serial) == 0:
+            serial_short = "None"
+        else:
+            serial_short = serial
+
+        # Récuperation de la description
+        file_desc = open("/etc/usbguard/desc.conf","r")
+
+        for line in file_desc:
+            if id in line:
+                description = line
+                description = description.replace("\n","")
+                description = description.split("#&#")[2]
+                break
+
+        # Affichage des labels
+        label_id = QLabel(f"ID : {id}")
+        label_id.setFixedSize(104,30)
+        self.zone2_layout.addWidget(label_id, i, 0)
+
+        label_serial = QLabel(f"S/N : {serial_short}")
+        label_serial.setFixedSize(135,30)
+        self.zone2_layout.addWidget(label_serial, i, 1)
+
+        # Affichage de la description
+        desc = QLineEdit(f"{description}")
+        desc.setEnabled(False)
+        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
+                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
+        desc.setFixedHeight(30)
+        self.zone2_layout.addWidget(desc, i, 2)
+
+        # Déclaration du qlineedit dans self
+        self.qline_dict[i] = desc
+            
+        # Ajout du bouton de modification
+        self.button_mod_dict[i] = QPushButton()
+        self.button_mod_dict[i].setFixedWidth(40)
+        self.button_mod_dict[i].setFixedHeight(30)
+        self.button_mod_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button
+        image_path = "icones/modifier_4.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_mod_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_mod_dict[i].setIcon(QIcon(pixmap))
+        self.button_mod_dict[i].setIconSize(self.button_mod_dict[i].size())
+
+        # Ajout d'une propriété personnalisé
+        self.button_mod_dict[i].setProperty("position", (i))
+        self.button_mod_dict[i].setProperty("serial", (serial))
+        self.button_mod_dict[i].setProperty("id", (id))
+
+        # Ajout d'une action au button de modification
+        self.button_mod_dict[i].clicked.connect(lambda: action_modif_desc_allow(self))
+        self.zone2_layout.addWidget(self.button_mod_dict[i], i, 3)
+
+        # Ajout du bouton de suppresion
+        self.button_del_dict[i] = QPushButton()
+        self.button_del_dict[i].setFixedWidth(40)
+        self.button_del_dict[i].setFixedHeight(30)
+        self.button_del_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button de suppresion
+        image_path = "icones/supprimer_4.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_del_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_del_dict[i].setIcon(QIcon(pixmap))
+        self.button_del_dict[i].setIconSize(self.button_del_dict[i].size())
+
+        # Ajout d'une propriété personnalisé
+        self.button_del_dict[i].setProperty("position", (i))
+        self.button_del_dict[i].setProperty("serial", (serial))
+        self.button_del_dict[i].setProperty("id", (id))
+
+        # Ajout d'une action au button de modification
+        self.button_del_dict[i].clicked.connect(lambda: action_del_allow(self))
+        self.zone2_layout.addWidget(self.button_del_dict[i], i, 4)
+
+        # Ajout d'un espacement vertical de 40 pixels entre chaque ligne
+        self.zone2_layout.setVerticalSpacing(40)
+
+        # Ajouter la ligne horizontale
+        if i+1 != files_num:
+            line = QFrame()
+            line.setFrameShape(QFrame.HLine)
+            line.setFrameShadow(QFrame.Sunken)
+            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            self.zone2_layout.addWidget(line, i, 0, 2, 5)
+
+    # Comblement des buttons
+    value = (len(self.button_mod_dict))
+    while value < 4:
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, value, 0)
+        value += 1
+
+    # Création de la zone de défilement
+    self.scroll_area = QScrollArea()
+    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
+                                   QScrollArea::viewport {background: transparent;}\
+                                   QScrollBar::add-line:vertical {width: 0px;}\
+                                   QScrollBar::sub-line:vertical {width: 0px;}\
+                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
+                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
+                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    self.scroll_area.setWidgetResizable(True)
+    self.scroll_area.setWidget(self.zone2_content)
+        
+    # Création des widgets pour les zones
+    self.zone2 = QWidget()
+    self.zone2.setStyleSheet("background: None;")
+    self.zone2_layout = QVBoxLayout()
+    self.zone2_layout.addWidget(self.scroll_area)
+    self.zone2.setLayout(self.zone2_layout)
+        
+    # Configuration du layout principal
+    self.main_layout.addWidget(self.zone2)
+
+def zone_2_block(self):
+
+    # Suppresion de la zone 2 precedente
+    clear_zone_2(self)
+
+    # Activation/deactivation des buttons
+    self.button1.setCheckable(True)
+    self.button1.setChecked(False)
+    self.button2.setCheckable(True)
+    self.button2.setChecked(False)
+    self.button3.setCheckable(True)
+    self.button3.setChecked(True)
+
+    # Création du contenu pour la zone 2
+    self.zone2_content = QWidget()
+    self.zone2_layout = QGridLayout(self.zone2_content)
+
+    # Extraction du nombre de periphérique dans rules.conf
+    files_num = subprocess.check_output(["sudo", "usbguard", "list-devices"])
+    files_num = str(files_num.decode("utf-8"))
+    files_num = files_num.split("\n")
+
+    # Déclaration du dict de button
+    self.button_add_dict = {}
+    self.button_tmp_dict = {}
+    self.qline_dict = {}
+    block_device = {}
+
+    # new list block device
+    for i in range(len(files_num)):
+        if "block" in files_num[i]:
+            block_device[len(block_device)+1] = files_num[i]
+
+    # Ajout des lignes et colonnes dans la zone 2
+    for i in range(len(block_device)):
+
+        # Récupération de l'ID du device
+        lines = block_device[i+1]
+        id = lines.split(" ")[3]
+        serial = lines.split(" ")[5].replace("\"","")
+
+        # Creation du serial_short si necessaire
+        if len(serial) > 10:
+            serial_short = serial[0:10] + "..."
+        elif len(serial) == 0:
+            serial_short = "None"
+        else:
+            serial_short = serial
+
+        # Description par default
+        desc = "Blocked Device"
+        
+        # Ajout des labels
+        label = QLabel(f"ID : {id}")
+        label.setFixedSize(104,30)
+        self.zone2_layout.addWidget(label, i, 0)
+        label_serial = QLabel(f"S/N : {serial_short}")
+        label_serial.setFixedSize(135,30)
+        self.zone2_layout.addWidget(label_serial, i, 1)
+
+        desc = QLineEdit(f"{desc}")
+        desc.setEnabled(False)
+        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
+                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
+        desc.setFixedHeight(30)
+        self.zone2_layout.addWidget(desc, i, 2)
+
+        # Déclaration du qlineedit dans self
+        self.qline_dict[i] = desc
+            
+        # Ajout du bouton de modification
+        self.button_add_dict[i] = QPushButton()
+        self.button_add_dict[i].setFixedWidth(40)
+        self.button_add_dict[i].setFixedHeight(30)
+        self.button_add_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button d'ajout permanent
+        image_path = "icones/add.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_add_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_add_dict[i].setIcon(QIcon(pixmap))
+        self.button_add_dict[i].setIconSize(self.button_add_dict[i].size())
+
+        # Ajout d'une propriété personnalisé
+        self.button_add_dict[i].setProperty("position", (i))
+        self.button_add_dict[i].setProperty("serial", (serial))
+        self.button_add_dict[i].setProperty("id", (id))
+        self.button_add_dict[i].setProperty("device", block_device[i+1].split(" ", 2)[2])
+
+        # Ajout d'une action au button d'ajout permanent
+        self.button_add_dict[i].clicked.connect(lambda: action_add_block(self))
+        self.zone2_layout.addWidget(self.button_add_dict[i], i, 3)
+
+        # Ajout d'une action au button d'ajout temporaire
+        self.button_tmp_dict[i] = QPushButton()
+        self.button_tmp_dict[i].setFixedWidth(40)
+        self.button_tmp_dict[i].setFixedHeight(30)
+        self.button_tmp_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button d'ajout temporaire
+        image_path = "icones/add_tmp.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_tmp_dict[i].setIcon(QIcon(pixmap))
+        self.button_tmp_dict[i].setIconSize(self.button_tmp_dict[i].size())
+    
+        # Ajout d'une propriété personnalisé
+        self.button_tmp_dict[i].setProperty("position", (i))
+        self.button_tmp_dict[i].setProperty("serial", (serial))
+        self.button_tmp_dict[i].setProperty("id", (id))
+        self.button_tmp_dict[i].setProperty("device", block_device[i+1].split(" ", 2)[2])
+    
+        # Ajout d'une action au button d'ajout temporaire
+        self.button_tmp_dict[i].clicked.connect(lambda: action_tmp_block(self))
+        self.zone2_layout.addWidget(self.button_tmp_dict[i], i, 4)
+    
+        # Ajout d'un espacement vertical de 40 pixels entre chaque ligne
+        self.zone2_layout.setVerticalSpacing(40)
+
+        # Ajouter la ligne horizontale
+        if i+1 != len(block_device):
+            line = QFrame()
+            line.setFrameShape(QFrame.HLine)
+            line.setFrameShadow(QFrame.Sunken)
+            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            self.zone2_layout.addWidget(line, i, 0, 2, 5)
+ # Comblement des buttons
+    value = (len(self.button_add_dict))
+    while value < 4:
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, value, 0)
+        value += 1
+    
+    # Création de la zone de défilement
+    self.scroll_area = QScrollArea()
+    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
+                                   QScrollArea::viewport {background: transparent;}\
+                                   QScrollBar::add-line:vertical {width: 0px;}\
+                                   QScrollBar::sub-line:vertical {width: 0px;}\
+                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
+                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
+                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    self.scroll_area.setWidgetResizable(True)
+    self.scroll_area.setWidget(self.zone2_content)
+        
+    # Création des widgets pour les zones
+    self.zone2 = QWidget()
+    self.zone2.setStyleSheet("background: None;")
+    self.zone2_layout = QVBoxLayout()
+    self.zone2_layout.addWidget(self.scroll_area)
+    self.zone2.setLayout(self.zone2_layout)
+        
+    # Configuration du layout principal
+    self.main_layout.addWidget(self.zone2)
+
+    # Refresh de la liste des peripherique
+
+def zone_2_tmp(self):
+
+    # Suppresion de la zone 2 precedente
+    clear_zone_2(self)
+
+    # Activation/deactivation des buttons
+    self.button1.setCheckable(True)
+    self.button1.setChecked(False)
+    self.button2.setCheckable(True)
+    self.button2.setChecked(True)
+    self.button3.setCheckable(True)
+    self.button3.setChecked(False)
+
+    # Création du contenu pour la zone 2
+    self.zone2_content = QWidget()
+    self.zone2_layout = QGridLayout(self.zone2_content)
+
+    # Extraction du nombre de periphérique dans rules.conf
+    files_num = subprocess.check_output(["sudo", "usbguard", "list-devices"])
+    files_num = str(files_num.decode("utf-8"))
+    files_num = files_num.split("\n")
+
+    # Vérification de l'autorisation temporaire
+    f = open("/etc/usbguard/rules.conf","r")
+    file_allow = f.read()
+    f.close()
+
+    # Initialisation de la liste des device temporaire
+    temp_list = []
+
+    for i in range(len(files_num)-1):
+
+        # Récuperation de l'ID
+        id = files_num[i].split(" ")[3]
+
+        # Creation de la liste des device temporaire
+        if id not in file_allow and "xHCI Host Controller" not in files_num[i] and "block" not in files_num[i]:
+            temp_list.append(files_num[i])
+
+    # Déclaration du dict de button
+    self.button_add_tmp_dict = {}
+    self.button_rmv_dict = {}
+    self.qline_dict = {}
+        
+    # Ajout des lignes et colonnes dans la zone 2
+    for i in range(len(temp_list)):
+
+        #print (temp_list)
+        # Récupération de l'ID du device
+        #lines = temp_list[i]
+        id = temp_list[i].split(" ")[3]
+        serial = temp_list[i].split(" ")[5].replace("\"","")
+
+        # Creation du serial_short si necessaire
+        if len(serial) > 10:
+            serial_short = serial[0:10] + "..."
+        elif len(serial) == 0:
+            serial_short = "None"
+        else:
+            serial_short = serial
+
+        # Description par default
+        description = "Temporary device"
+
+        # Affichage des labels
+        label_id = QLabel(f"ID : {id}")
+        label_id.setFixedSize(104,30)
+        self.zone2_layout.addWidget(label_id, i, 0)
+
+        label_serial = QLabel(f"S/N : {serial_short}")
+        label_serial.setFixedSize(135,30)
+        self.zone2_layout.addWidget(label_serial, i, 1)
+
+        # Affichage de la description
+        desc = QLineEdit(f"{description}")
+        desc.setEnabled(False)
+        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
+                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
+        desc.setFixedHeight(30)
+        self.zone2_layout.addWidget(desc, i, 2)
+
+        # Déclaration du qlineedit dans self
+        self.qline_dict[i] = desc
+            
+        # Ajout du bouton de modification
+        self.button_add_tmp_dict[i] = QPushButton()
+        self.button_add_tmp_dict[i].setFixedWidth(40)
+        self.button_add_tmp_dict[i].setFixedHeight(30)
+        self.button_add_tmp_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button ajout
+        image_path = "icones/add.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_add_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_add_tmp_dict[i].setIcon(QIcon(pixmap))
+        self.button_add_tmp_dict[i].setIconSize(self.button_add_tmp_dict[i].size())
+
+        # Ajout d'une propriété personnalisé
+        self.button_add_tmp_dict[i].setProperty("position", (i))
+        self.button_add_tmp_dict[i].setProperty("serial", (serial))
+        self.button_add_tmp_dict[i].setProperty("id", (id))
+        self.button_add_tmp_dict[i].setProperty("device", temp_list[i].split(" ", 2)[2])
+
+        # Ajout d'une action au button de modification
+        self.button_add_tmp_dict[i].clicked.connect(lambda: action_add_tmp(self))
+        self.zone2_layout.addWidget(self.button_add_tmp_dict[i], i, 3)
+
+        # Ajout du bouton de suppresion
+        self.button_rmv_dict[i] = QPushButton()
+        self.button_rmv_dict[i].setFixedWidth(40)
+        self.button_rmv_dict[i].setFixedHeight(30)
+        self.button_rmv_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
+                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+
+        # Ajout de l'icone du button de suppresion
+        image_path = "icones/supprimer_4.png"
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(self.button_rmv_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+        self.button_rmv_dict[i].setIcon(QIcon(pixmap))
+        self.button_rmv_dict[i].setIconSize(self.button_rmv_dict[i].size())
+
+        # Ajout d'une propriété personnalisé
+        self.button_rmv_dict[i].setProperty("position", (i))
+        self.button_rmv_dict[i].setProperty("serial", (serial))
+        self.button_rmv_dict[i].setProperty("id", (id))
+
+        # Ajout d'une action au button de modification
+        self.button_rmv_dict[i].clicked.connect(lambda: action_rmv_tmp(self))
+        self.zone2_layout.addWidget(self.button_rmv_dict[i], i, 4)
+
+        # Ajout d'un espacement vertical de 40 pixels entre chaque ligne
+        self.zone2_layout.setVerticalSpacing(40)
+
+        # Ajouter la ligne horizontale
+        if i+1 != len(temp_list):
+            line = QFrame()
+            line.setFrameShape(QFrame.HLine)
+            line.setFrameShadow(QFrame.Sunken)
+            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            self.zone2_layout.addWidget(line, i, 0, 2, 5)
+
+    # Comblement des buttons
+    value = (len(self.button_add_tmp_dict))
+    while value < 4:
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, value, 0)
+        value += 1
+
+    # Création de la zone de défilement
+    self.scroll_area = QScrollArea()
+    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
+                                   QScrollArea::viewport {background: transparent;}\
+                                   QScrollBar::add-line:vertical {width: 0px;}\
+                                   QScrollBar::sub-line:vertical {width: 0px;}\
+                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
+                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
+                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    self.scroll_area.setWidgetResizable(True)
+    self.scroll_area.setWidget(self.zone2_content)
+        
+    # Création des widgets pour les zones
+    self.zone2 = QWidget()
+    self.zone2.setStyleSheet("background: None;")
+    self.zone2_layout = QVBoxLayout()
+    self.zone2_layout.addWidget(self.scroll_area)
+    self.zone2.setLayout(self.zone2_layout)
+        
+    # Configuration du layout principal
+    self.main_layout.addWidget(self.zone2)
+
+def clear_zone_2(self):
+    if self.zone2_content:
+        self.zone2_content.deleteLater()
+    if self.zone2_layout:
+        self.zone2_layout.deleteLater()
+    if self.zone2:
+        self.zone2.deleteLater()
+
+def action_modif_desc_allow(self):
+    
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Activer/deactiver le qlineedit depuis la function
+    self.qline_dict[sender.property("position")].setEnabled(True)
+    self.qline_dict[sender.property("position")].setFocus()
+
+    # Connecter le signal returnPressed du QLineEdit au click du QPushButton
+    self.qline_dict[sender.property("position")].returnPressed.connect(self.button_mod_dict[sender.property("position")].click)
+
+    # Modification de l'icone du button_mod
+    image_path = "icones/verifier_4.png"
+    pixmap = QPixmap(image_path)
+    pixmap = pixmap.scaled(self.button_mod_dict[sender.property("position")].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+    self.button_mod_dict[sender.property("position")].setIcon(QIcon(pixmap))
+    self.button_mod_dict[sender.property("position")].setIconSize(self.button_mod_dict[sender.property("position")].size())
+
+    # Modification de l'action du button_mod
+    old_desc = self.qline_dict[sender.property("position")].text()
+    periph_id = sender.property("id")
+    serial = sender.property("serial")
+    self.button_mod_dict[sender.property("position")].clicked.connect(lambda: validation_modif_allow(self, periph_id, old_desc, self.qline_dict[sender.property("position")].text(), serial))
+
+def validation_modif_allow(self, periph_id, old_desc, new_desc, serial):
+
+    # Modification de la description dans le fichier desc.conf
+    os.system(f"sed -i 's/{periph_id}#\&#{serial}#\&#{old_desc}/{periph_id}#\&#{serial}#\&#{new_desc}/g' /etc/usbguard/desc.conf")
+
+    # Refresh de la zone 2
+    zone_2_allow(self)
+
+def action_del_allow(self):
+    
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Suppression du peripherique autoriser
+    os.system(f"sed -i '/{sender.property('id')}/d' /etc/usbguard/desc.conf\n")
+
+    # Suppression de la description dans le fichier desc.conf
+    os.system(f"sed -i '/{sender.property('id')}/d' /etc/usbguard/rules.conf\n")
+
+    # Redemarage du service USBGuard
+    os.system(f"sudo systemctl restart usbguard.service")
+
+    # Refresh de la zone 2
+    zone_2_allow(self)
+
+def action_add_block(self):
+
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Ajout du peripherique dans rules.conf
+    f1 = open("/etc/usbguard/rules.conf","a")
+    f1.write(f"allow {sender.property('device')}\n")
+    f1.close()
+
+    # Ajout du peripherique dans desc.conf
+    f2 = open("/etc/usbguard/desc.conf","a")
+    f2.write(f"{sender.property('id')}#&#{sender.property('serial')}#&#Default\n")
+    f2.close()
+
+    # Suppresion du retour a la ligne
+    os.system(f"sed -i -e '$s/\r$//' /etc/usbguard/rules.conf")
+
+    # Redemarage du service USBGuard
+    os.system(f"sudo systemctl restart usbguard.service")
+
+    # Refresh zone 2
+    zone_2_block(self)
+
+def action_tmp_block(self):
+
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Ajout temporaire du peripherique
+    os.system(f"sudo usbguard allow-device {sender.property('id')}")
+
+    # Refresh zone 2
+    zone_2_block(self)
+
+def action_add_tmp(self):
+
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Ajout du peripherique dans rules.conf
+    f1 = open("/etc/usbguard/rules.conf","a")
+    f1.write(f"allow {sender.property('device')}\n")
+    f1.close()
+
+    # Ajout du peripherique dans desc.conf
+    f2 = open("/etc/usbguard/desc.conf","a")
+    f2.write(f"{sender.property('id')}#&#{sender.property('serial')}#&#Default\n")
+    f2.close()
+
+    # Suppresion du retour a la ligne
+    os.system(f"sed -i -e '$s/\r$//' /etc/usbguard/rules.conf")
+
+    # Redemarage du service USBGuard
+    os.system(f"sudo systemctl restart usbguard.service")
+
+    # Refresh zone 2
+    zone_2_tmp(self)
+
+def action_rmv_tmp(self):
+
+    # Récupère l'ID du périphérique
+    sender = app.sender()
+
+    # Ajout du peripherique dans rules.conf
+    os.system(f"sudo usbguard block-device {sender.property('id')}")
+
+    # Refresh zone 2
+    zone_2_tmp(self)
+
+def init_desc():
+    # Récuperation du contenu de /etc/usbguard/desc.conf
+    try:
+        file_read = open("/etc/usbguard/desc.conf", "r")
+        file_content = file_read.read()
+        file_read.close()
+    except:
+        file_content = ""
+
+    # Ouverture du fichier /etc/usbguard/desc.conf
+    file_write = open("/etc/usbguard/desc.conf", "a")
+
+    # Extraction du nombre de periphérique dans rules.conf
+    files_num = subprocess.check_output(["sudo","wc","-l","/etc/usbguard/rules.conf"])
+    files_num = str(files_num.decode("utf-8"))
+    files_num = int(files_num.split(" ")[0])
+
+    # Parcours des lignes rules.conf
+    for i in range(files_num):
+
+        # Récuperation des numero d'ID
+        f = open('/etc/usbguard/rules.conf')
+        lines = f.readlines()
+        f.close()
+        id = lines[i].split(" ")[2]
+        serial = lines[i].split(" ")[4].replace("\"","")
+
+        # Verifier que tout les peripheriques ont une description dans desc.conf au démarrage de l'appli
+        if id not in file_content or serial not in file_content:
+
+            # Ecriture des descriptions dans desc.conf
+            file_write.write(f"{id}#&#{serial}#&#Default\n")
+
+    # Fermeture du fichier
+    file_write.close()
+
+if __name__ == "__main__":
+    app = QApplication([])
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
+    window = MainWindow()
+
+    # Configuration du style de la fenêtre
+    window.setWindowTitle("USBGuard")
+    window.setStyleSheet(f"background-color: #353535;")
+    window.setWindowIcon(QIcon("icones/bouclier.png"))
+
+    window.show()
+    sys.exit(app.exec_())
