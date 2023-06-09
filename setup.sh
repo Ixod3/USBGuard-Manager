@@ -4,7 +4,8 @@ if [ "$(id -u)" != "0" ]; then
     echo "Use root right to launch this script"
     exit 1
 else
-    #/usr/bin/pip3 install qdarkstyle -y
+    # Installation de la base du theme
+    /usr/bin/pip3 install qdarkstyle
 
     # Deplacer les fichiers de conf
     cp ./usbguard-manager.ini /etc/usbguard/usbguard-manager.ini
