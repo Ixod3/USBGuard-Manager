@@ -25,10 +25,25 @@ else
     cp -r ./themes/* /etc/usbguard/themes/
 
     # Gestion des droits
-    chmod +x /etc/usbguard/usbguard-manager-popup-halt.sh
-    chmod +x /etc/usbguard/usbguard-manager-popup-launch.sh
-    chmod +x /usr/bin/usbguard-manager
-    chmod +x /usr/bin/usbguard-manager-popup
+    chown -R root:root /etc/usbguard/themes/
+    chmod -R 644 /etc/usbguard/themes/
+
+    chown root:root /etc/udev/rules.d/80-usbguard-manager.rules
+    chmod 644 /etc/udev/rules.d/80-usbguard-manager.rules
+
+    chown root:root /usr/bin/usbguard-manager
+    chmod 755 /usr/bin/usbguard-manager
+
+    chown root:root /usr/bin/usbguard-manager-popup
+    chmod 755 /usr/bin/usbguard-manager-popup
+
+    chown root:root /etc/usbguard/usbguard-manager-popup-halt.sh
+    chmod 700 /etc/usbguard/usbguard-manager-popup-halt.sh
+    chown root:root /etc/usbguard/usbguard-manager-popup-launch.sh
+    chmod 700 /etc/usbguard/usbguard-manager-popup-launch.sh
+
+    chown root:root /etc/usbguard/usbguard-manager.ini
+    chmod 644 /etc/usbguard/usbguard-manager.ini
 
     # Restart udev service
     systemctl restart udev
