@@ -31,8 +31,8 @@ else
     resolution=$(xrandr | awk '/ connected primary/ {split($4, res, "+"); print res[1]}')
     width=$(echo "$resolution" | awk -F'x' '{print $1}')
     height=$(echo "$resolution" | awk -F'x' '{print $2}')
-    sed -i "s/\(height=\).*/\1$height/" /etc/usbguard/usbguard-manager.conf
-    sed -i "s/\(width=\).*/\1$width/" /etc/usbguard/usbguard-manager.conf
+    sed -i "s/\(height=\).*/\1$height/" /etc/usbguard/usbguard-manager.ini
+    sed -i "s/\(width=\).*/\1$width/" /etc/usbguard/usbguard-manager.ini
 
     exit 0
 fi

@@ -1,0 +1,170 @@
+QPushButton#button1:checked {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button1:checked:hover {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button1:hover {
+    background-color: #dadada;
+    border: 1px solid #d3d3d3;
+    border-radius: 2px;
+}   
+QPushButton#button1  {
+    background-color: #e0e0e0;
+    color: #2e3436;
+    border: 1px solid #d3d3d3;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+QPushButton#button2:checked {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button2:checked:hover {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button2:hover {
+    background-color: #dadada;
+    border: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+QPushButton#button2 {
+    background-color: #e0e0e0;
+    color: #2e3436;
+    border: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+QPushButton#button3:checked {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button3:checked:hover {
+    background-color: #3484E4;
+    color: #FCFCFC;
+}
+QPushButton#button3:hover {
+    background-color: #dadada;
+    border: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+QPushButton#button3 {
+    background-color: #e0e0e0;
+    color: #2e3436;
+    border: 1px solid #dadada;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+QLabel#label_id {
+    color: #323232;
+}
+QLabel#label_serial {
+    color: #323232;
+}
+QLineEdit#desc:enabled {
+    background-color: #FCFCFC;
+    border: 1px solid gray;
+    color: #323232;
+    border-radius: 2px;
+}
+QLineEdit#desc:disabled {
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    color: #323232;
+    border-radius: 2px;
+}
+QPushButton#button_mod{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_mod:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}
+QPushButton#button_del{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_del:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}
+QFrame#line {
+    border-bottom: 2px solid #D3D3D3;
+}
+QScrollArea#scroll_area {
+    border: 1px solid #1B1B1B;
+    background-color: #FCFCFC;
+}
+QScrollArea#scroll_area::viewport {
+    background: transparent;
+}
+QScrollBar#scroll_bar::add-line:vertical {
+    width: 0px;
+}
+QScrollBar#scroll_bar::sub-line:vertical {
+    width: 0px;
+}
+QScrollBar#scroll_bar:vertical {
+    background: #F2F0EF;
+    width: 14px;
+    border: 1px solid #DDD9D6;
+}
+QScrollBar#scroll_bar::handle::pressed {
+    background: #206FD0; width: 20px;
+}
+QScrollBar#scroll_bar::handle {
+    background: #ABABAA;
+    border: 1px solid #ABABAA;
+    width: 20px;
+}
+QPushButton#button_add{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_add:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}
+QPushButton#button_tmp{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_tmp:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}
+QPushButton#button_add_tmp{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_add_tmp:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}
+QPushButton#button_rmv{
+    background-color: #FCFCFC;
+    border: None;
+    border-radius: 2px;
+}
+QPushButton#button_rmv:hover{
+    background-color: #E0E0E0;
+    border: 1px solid #D3D3D3;
+    border-radius: 2px;
+}

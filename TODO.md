@@ -10,9 +10,11 @@ sudo pip3 install qdarkstyle
 ## Manager
 
 + Trouver une icone pour l'appli (icone USBGUARD ?)
+- Refaire le setup.sh
 ~ Refresh la liste des peripheriques bloqué toutes les 5 secondes
-- Ajout du script python en /usr/bin/usbguard-Manager
++ Ajout du script python en /usr/bin/usbguard-Manager
 - Ajout extension.debian.org ?
++ ajouter le theme dark et light dans setup.sh
 + Faire une entete en haut du code
 + Centrer le usbguard-manager par rapport a la taille de l'ecran
 + Créer un group nommé "usbguard"
@@ -28,7 +30,7 @@ setup.sh
 80-usbguard-manager.rules
 
 ## Arborescence
-/etc/usbguard/icones
+/etc/usbguard/themes
 /etc/usbguard/usbguard-manager.conf
 /etc/usbguard/usbguard-manage-popup-halt.sh
 /etc/usbguard/usbguard-manage-popup-launch.sh

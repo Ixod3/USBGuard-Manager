@@ -19,8 +19,9 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        screen_height = 900 # replace by height screen value {place_height_screen_value_here}
-        screen_width = 1600 # replace by width screen value {place_width_screen_value_here}
+        # lire dans /etc/usbguard/usbguard-manager.conf
+        screen_height = 900
+        screen_width = 1600
 
         window_width = 400
         window_height = 150

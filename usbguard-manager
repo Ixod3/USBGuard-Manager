@@ -9,6 +9,7 @@ import os
 import sys
 import subprocess
 import qdarkstyle
+import configparser
 from PyQt5.QtWidgets import QFrame, QDesktopWidget, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
@@ -50,31 +51,27 @@ class MainWindow(QMainWindow):
 
 def zone_1(self):
 
+    # Verification du theme
+    gnome_theme, theme = read_theme()
+    
     # Création des boutons pour la zone 1
     self.button1 = QPushButton("Allow")
+    self.button1.setObjectName("button1")
     self.button2 = QPushButton("Temporary")
+    self.button2.setObjectName("button2")
     self.button3 = QPushButton("Block")
+    self.button3.setObjectName("button3")
         
     # Configuration des styles pour les boutons
     hauteur = 25
-    self.button1.setFixedSize(224, hauteur)
-    self.button1.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
-                               ")
+    self.button1.setFixedSize(224, hauteur)    
     self.button2.setFixedSize(223, hauteur)
-    self.button2.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
-                               ")
     self.button3.setFixedSize(223, hauteur)
-    self.button3.setStyleSheet("QPushButton:checked {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:checked:hover {background-color: #1E1E1E; color: #EEEEEC;}\
-                               QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                               QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B; border-top-left-radius: 0px;border-bottom-left-radius: 0px;}\
-                               ")
+
+    # Choix du theme
+    self.button1.setStyleSheet(gnome_theme)
+    self.button2.setStyleSheet(gnome_theme)
+    self.button3.setStyleSheet(gnome_theme)
 
     # Déclaration de la zone 2 initial
     self.zone2_content = QWidget()
@@ -103,6 +100,9 @@ def zone_1(self):
     self.main_layout.addWidget(self.zone1)
 
 def zone_2_allow(self):
+
+    # Verification du theme
+    gnome_theme, theme = read_theme()
 
     # Suppresion de la zone 2 precedente
     clear_zone_2(self)
@@ -160,18 +160,22 @@ def zone_2_allow(self):
         # Affichage des labels
         label_id = QLabel(f"ID : {id}")
         label_id.setFixedSize(104,30)
+        label_id.setObjectName("label_id")
+        label_id.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_id, i, 0)
 
         label_serial = QLabel(f"S/N : {serial_short}")
         label_serial.setFixedSize(135,30)
+        label_serial.setObjectName("label_serial")
+        label_serial.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_serial, i, 1)
 
         # Affichage de la description
         desc = QLineEdit(f"{description}")
         desc.setEnabled(False)
-        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
-                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
         desc.setFixedHeight(30)
+        desc.setObjectName("desc")
+        desc.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(desc, i, 2)
 
         # Déclaration du qlineedit dans self
@@ -181,11 +185,11 @@ def zone_2_allow(self):
         self.button_mod_dict[i] = QPushButton()
         self.button_mod_dict[i].setFixedWidth(40)
         self.button_mod_dict[i].setFixedHeight(30)
-        self.button_mod_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_mod_dict[i].setObjectName(f"button_mod")
+        self.button_mod_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button
-        image_path = "icones/modifier_4.png"
+        image_path = f"./themes/{theme}/modifier.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_mod_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_mod_dict[i].setIcon(QIcon(pixmap))
@@ -204,11 +208,11 @@ def zone_2_allow(self):
         self.button_del_dict[i] = QPushButton()
         self.button_del_dict[i].setFixedWidth(40)
         self.button_del_dict[i].setFixedHeight(30)
-        self.button_del_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_del_dict[i].setObjectName(f"button_del")
+        self.button_del_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button de suppresion
-        image_path = "icones/supprimer_4.png"
+        image_path = f"./themes/{theme}/supprimer.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_del_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_del_dict[i].setIcon(QIcon(pixmap))
@@ -231,7 +235,8 @@ def zone_2_allow(self):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
-            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            line.setObjectName(f"line")
+            line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
 
     # Comblement des buttons
@@ -243,19 +248,16 @@ def zone_2_allow(self):
 
     # Création de la zone de défilement
     self.scroll_area = QScrollArea()
-    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
-                                   QScrollArea::viewport {background: transparent;}\
-                                   QScrollBar::add-line:vertical {width: 0px;}\
-                                   QScrollBar::sub-line:vertical {width: 0px;}\
-                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
-                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
-                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setObjectName(f"scroll_area")
+    self.scroll_area.setStyleSheet(gnome_theme)
     self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
     self.scroll_area.setWidgetResizable(True)
     self.scroll_area.setWidget(self.zone2_content)
 
     # Vitesse de la scrollbar
     self.scroll_bar = self.scroll_area.verticalScrollBar()
+    self.scroll_bar.setObjectName(f"scroll_bar")
+    self.scroll_bar.setStyleSheet(gnome_theme)
     self.scroll_bar.setSingleStep(24)
         
     # Création des widgets pour les zones
@@ -269,6 +271,9 @@ def zone_2_allow(self):
     self.main_layout.addWidget(self.zone2)
 
 def zone_2_block(self):
+
+    # Verification du theme
+    gnome_theme, theme = read_theme()
 
     # Suppresion de la zone 2 precedente
     clear_zone_2(self)
@@ -321,17 +326,22 @@ def zone_2_block(self):
         desc = "Blocked Device"
         
         # Ajout des labels
-        label = QLabel(f"ID : {id}")
-        label.setFixedSize(104,30)
-        self.zone2_layout.addWidget(label, i, 0)
+        label_id = QLabel(f"ID : {id}")
+        label_id.setFixedSize(104,30)
+        label_id.setObjectName("label_id")
+        label_id.setStyleSheet(gnome_theme)
+        self.zone2_layout.addWidget(label_id, i, 0)
+
         label_serial = QLabel(f"S/N : {serial_short}")
         label_serial.setFixedSize(135,30)
+        label_serial.setObjectName("label_serial")
+        label_serial.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_serial, i, 1)
 
         desc = QLineEdit(f"{desc}")
         desc.setEnabled(False)
-        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
-                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
+        desc.setObjectName("desc")
+        desc.setStyleSheet(gnome_theme)
         desc.setFixedHeight(30)
         self.zone2_layout.addWidget(desc, i, 2)
 
@@ -342,11 +352,11 @@ def zone_2_block(self):
         self.button_add_dict[i] = QPushButton()
         self.button_add_dict[i].setFixedWidth(40)
         self.button_add_dict[i].setFixedHeight(30)
-        self.button_add_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_add_dict[i].setObjectName(f"button_add")
+        self.button_add_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button d'ajout permanent
-        image_path = "icones/add.png"
+        image_path = f"./themes/{theme}/add.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_add_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_add_dict[i].setIcon(QIcon(pixmap))
@@ -366,11 +376,11 @@ def zone_2_block(self):
         self.button_tmp_dict[i] = QPushButton()
         self.button_tmp_dict[i].setFixedWidth(40)
         self.button_tmp_dict[i].setFixedHeight(30)
-        self.button_tmp_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_tmp_dict[i].setObjectName(f"button_tmp")
+        self.button_tmp_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button d'ajout temporaire
-        image_path = "icones/add_tmp.png"
+        image_path = f"./themes/{theme}/add_tmp.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_tmp_dict[i].setIcon(QIcon(pixmap))
@@ -394,7 +404,8 @@ def zone_2_block(self):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
-            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            line.setObjectName(f"line")
+            line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
  # Comblement des buttons
     value = (len(self.button_add_dict))
@@ -405,13 +416,8 @@ def zone_2_block(self):
     
     # Création de la zone de défilement
     self.scroll_area = QScrollArea()
-    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
-                                   QScrollArea::viewport {background: transparent;}\
-                                   QScrollBar::add-line:vertical {width: 0px;}\
-                                   QScrollBar::sub-line:vertical {width: 0px;}\
-                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
-                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
-                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setObjectName(f"scroll_area")
+    self.scroll_area.setStyleSheet(gnome_theme)
     self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
     self.scroll_area.setWidgetResizable(True)
     self.scroll_area.setWidget(self.zone2_content)
@@ -425,12 +431,17 @@ def zone_2_block(self):
 
     # Vitesse de la scrollbar
     self.scroll_bar = self.scroll_area.verticalScrollBar()
+    self.scroll_bar.setObjectName(f"scroll_bar")
+    self.scroll_bar.setStyleSheet(gnome_theme)
     self.scroll_bar.setSingleStep(24)
         
     # Configuration du layout principal
     self.main_layout.addWidget(self.zone2)
 
 def zone_2_tmp(self):
+
+    # Verification du theme
+    gnome_theme, theme = read_theme()
 
     # Suppresion de la zone 2 precedente
     clear_zone_2(self)
@@ -477,9 +488,7 @@ def zone_2_tmp(self):
     # Ajout des lignes et colonnes dans la zone 2
     for i in range(len(temp_list)):
 
-        #print (temp_list)
         # Récupération de l'ID du device
-        #lines = temp_list[i]
         id = temp_list[i].split(" ")[3]
         serial = temp_list[i].split(" ")[5].replace("\"","")
 
@@ -497,17 +506,21 @@ def zone_2_tmp(self):
         # Affichage des labels
         label_id = QLabel(f"ID : {id}")
         label_id.setFixedSize(104,30)
+        label_id.setObjectName("label_id")
+        label_id.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_id, i, 0)
 
         label_serial = QLabel(f"S/N : {serial_short}")
         label_serial.setFixedSize(135,30)
+        label_serial.setObjectName("label_serial")
+        label_serial.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_serial, i, 1)
 
         # Affichage de la description
         desc = QLineEdit(f"{description}")
         desc.setEnabled(False)
-        desc.setStyleSheet(":enabled {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}\
-                           :disabled {background-color: #282828; border: 1px solid #1B1B1B; color: #EEEEEC; border-radius: 2px;}")
+        desc.setObjectName("desc")
+        desc.setStyleSheet(gnome_theme)
         desc.setFixedHeight(30)
         self.zone2_layout.addWidget(desc, i, 2)
 
@@ -518,11 +531,11 @@ def zone_2_tmp(self):
         self.button_add_tmp_dict[i] = QPushButton()
         self.button_add_tmp_dict[i].setFixedWidth(40)
         self.button_add_tmp_dict[i].setFixedHeight(30)
-        self.button_add_tmp_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_add_tmp_dict[i].setObjectName(f"button_add_tmp")
+        self.button_add_tmp_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button ajout
-        image_path = "icones/add.png"
+        image_path = f"./themes/{theme}/add.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_add_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_add_tmp_dict[i].setIcon(QIcon(pixmap))
@@ -542,11 +555,11 @@ def zone_2_tmp(self):
         self.button_rmv_dict[i] = QPushButton()
         self.button_rmv_dict[i].setFixedWidth(40)
         self.button_rmv_dict[i].setFixedHeight(30)
-        self.button_rmv_dict[i].setStyleSheet("QPushButton{background-color: #2D2D2D; border: None; border-radius: 2px;}\
-                                              QPushButton:hover{background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}")
+        self.button_rmv_dict[i].setObjectName(f"button_rmv")
+        self.button_rmv_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button de suppresion
-        image_path = "icones/supprimer_4.png"
+        image_path = f"./themes/{theme}/supprimer.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_rmv_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_rmv_dict[i].setIcon(QIcon(pixmap))
@@ -569,7 +582,8 @@ def zone_2_tmp(self):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
-            line.setStyleSheet("border-bottom: 2px solid #282828;")
+            line.setObjectName(f"line")
+            line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
 
     # Comblement des buttons
@@ -581,13 +595,8 @@ def zone_2_tmp(self):
 
     # Création de la zone de défilement
     self.scroll_area = QScrollArea()
-    self.scroll_area.setStyleSheet("QScrollArea {border: 1px solid #1B1B1B; background-color: #2D2D2D;}\
-                                   QScrollArea::viewport {background: transparent;}\
-                                   QScrollBar::add-line:vertical {width: 0px;}\
-                                   QScrollBar::sub-line:vertical {width: 0px;}\
-                                   QScrollBar:vertical {background: #323232; width: 14px; border: 1px solid #323232;}\
-                                   QScrollBar::handle::pressed {background: #205FAD; width: 20px;}\
-                                   QScrollBar::handle {background: #ABABAA; width: 20px;}")
+    self.scroll_area.setObjectName(f"scroll_area")
+    self.scroll_area.setStyleSheet(gnome_theme)
     self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
     self.scroll_area.setWidgetResizable(True)
     self.scroll_area.setWidget(self.zone2_content)
@@ -601,6 +610,8 @@ def zone_2_tmp(self):
 
     # Vitesse de la scrollbar
     self.scroll_bar = self.scroll_area.verticalScrollBar()
+    self.scroll_bar.setObjectName(f"scroll_bar")
+    self.scroll_bar.setStyleSheet(gnome_theme)
     self.scroll_bar.setSingleStep(24)
         
     # Configuration du layout principal
@@ -615,6 +626,9 @@ def clear_zone_2(self):
         self.zone2.deleteLater()
 
 def action_modif_desc_allow(self):
+
+    # Verification du theme
+    gnome_theme, theme = read_theme()
     
     # Récupère l'ID du périphérique
     sender = app.sender()
@@ -627,7 +641,7 @@ def action_modif_desc_allow(self):
     self.qline_dict[sender.property("position")].returnPressed.connect(self.button_mod_dict[sender.property("position")].click)
 
     # Modification de l'icone du button_mod
-    image_path = "icones/verifier_4.png"
+    image_path = f"./themes/{theme}/verifier.png"
     pixmap = QPixmap(image_path)
     pixmap = pixmap.scaled(self.button_mod_dict[sender.property("position")].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
     self.button_mod_dict[sender.property("position")].setIcon(QIcon(pixmap))
@@ -770,6 +784,20 @@ def init_desc():
     # Fermeture du fichier
     file_write.close()
 
+def read_theme():
+
+    # Lecture et récupération du theme dans le fichier de conf
+    config = configparser.ConfigParser()
+    config.read("usbguard-manager.ini")
+    theme = config.get("Settings", "theme")
+    
+    if theme != "dark" and theme != "light":
+        theme="dark"
+
+    gnome_theme = open(f"./themes/{theme}/gnome-{theme}.css").read()
+
+    return gnome_theme, theme
+
 if __name__ == "__main__":
     app = QApplication([])
     #app.setApplicationName("USBGuard")
@@ -777,10 +805,20 @@ if __name__ == "__main__":
     
     window = MainWindow()
 
+    # Récuperation du theme
+    config = configparser.ConfigParser()
+    config.read("usbguard-manager.ini")
+    theme = config.get("Settings", "theme")
+
+    if theme == 'light':
+        color = 'F6F5F4'
+    else:
+        color = '353535'
+    
     # Configuration du style de la fenêtre
     window.setWindowTitle("USBGuard-Manager")
-    window.setStyleSheet(f"background-color: #353535;")
-    window.setWindowIcon(QIcon("icones/usbguard.png"))
+    window.setStyleSheet(f"background-color: #{color};")
+    window.setWindowIcon(QIcon("./themes/usbguard.png"))
 
     window.show()
     sys.exit(app.exec_())
