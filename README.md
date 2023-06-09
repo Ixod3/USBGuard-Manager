@@ -6,6 +6,7 @@ The default comment of each device is "Default", it's recommand to change it to 
 
 ## Soon
 
+- Fix files/Folder right
 - "Insuffisante right" banner
 - Date of last connexion for each device
 

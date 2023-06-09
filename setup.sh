@@ -6,6 +6,7 @@ if [ "$(id -u)" != "0" ]; then
 else
     # Installation de la base du theme
     /usr/bin/pip3 install qdarkstyle
+    /usr/bin/pip3 install pyqt5
 
     # Deplacer les fichiers de conf
     cp ./usbguard-manager.ini /etc/usbguard/usbguard-manager.ini
