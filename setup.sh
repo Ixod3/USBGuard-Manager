@@ -4,19 +4,23 @@ if [ "$(id -u)" != "0" ]; then
     echo "Use root right to launch this script"
     exit 1
 else
-    #/usr/bin/pip3 install qdarkstyle
+    #/usr/bin/pip3 install qdarkstyle -y
 
     # Deplacer les fichiers de conf
-    cp ./usbguard-manager.conf /etc/usbguard/usbguard-manager.conf
+    cp ./usbguard-manager.ini /etc/usbguard/usbguard-manager.ini
     cp ./usbguard-manager-popup-halt.sh /etc/usbguard/usbguard-manager-popup-halt.sh
     cp ./usbguard-manager-popup-launch.sh /etc/usbguard/usbguard-manager-popup-launch.sh
     cp ./usbguard-manager /usr/bin/usbguard-manager
     cp ./usbguard-manager-popup /usr/bin/usbguard-manager-popup
     cp 80-usbguard-manager.rules /etc/udev/rules.d/80-usbguard-manager.rules
 
-    # Deplacer les icones
-    mkdir /etc/usbguard/icones # Verifier si le dossier existe
-    cp -r ./icones/* /etc/usbguard/icones/
+    # Deplacer les themes
+    if [ ! -d /etc/usbguard/themes ];then
+        mkdir /etc/usbguard/themes
+    fi
+
+    # Verifier si le dossier existe
+    cp -r ./themes/* /etc/usbguard/themes/
 
     # Gestion des droits
     chmod +x /etc/usbguard/usbguard-manager-popup-halt.sh

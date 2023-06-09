@@ -103,7 +103,7 @@ QFrame#line {
     border-bottom: 2px solid #D3D3D3;
 }
 QScrollArea#scroll_area {
-    border: 1px solid #1B1B1B;
+    border: 1px solid #7D7D7D;
     background-color: #FCFCFC;
 }
 QScrollArea#scroll_area::viewport {

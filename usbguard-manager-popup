@@ -8,6 +8,7 @@
 import os
 import sys
 import subprocess
+import configparser
 import qdarkstyle
 from PyQt5.QtWidgets import QFrame, QDesktopWidget, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
 from PyQt5.QtGui import QIcon, QPixmap
@@ -19,15 +20,18 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        # Récupère les informations de l'écran principal
+        width, height = self.read_screen_size()
+
         # lire dans /etc/usbguard/usbguard-manager.conf
-        screen_height = 900
-        screen_width = 1600
+#        screen_height = 900
+#        screen_width = 1600
 
         window_width = 400
         window_height = 150
         
-        x = (screen_width - window_width) // 2
-        y = (screen_height - window_height) // 3 * 2
+        x = (width - window_width) // 2
+        y = (height - window_height) // 3 * 2
 
         self.setWindowTitle('USBGuard-Popup')
         self.setFixedSize(window_width, window_height)
@@ -37,6 +41,9 @@ class MainWindow(QWidget):
         self.zone_popup()
 
     def zone_popup(self):
+
+        # Verification du theme
+        gnome_theme, theme = self.read_theme()
 
         # Déclaration du QGridLayout
         zone_popup_layout = QGridLayout()
@@ -57,31 +64,36 @@ class MainWindow(QWidget):
 
         # Déclaration du QGridLayout
         label_id = QLabel(f"ID : {id}")
+        label_id.setObjectName("label_id")
+        label_id.setStyleSheet(gnome_theme)
         label_id.setAlignment(Qt.AlignCenter)
         label_id.setFixedHeight(20)
 
         label_serial = QLabel(f"SN : {serial_short}")
+        label_serial.setObjectName("label_serial")
+        label_serial.setStyleSheet(gnome_theme)
         label_serial.setAlignment(Qt.AlignCenter)
         label_serial.setFixedHeight(20)
 
         lineedit_desc = QLineEdit("")
+        lineedit_desc.setObjectName("lineedit_desc")
         lineedit_desc.setPlaceholderText("Default")
-        lineedit_desc.setStyleSheet("QLineEdit {background-color: #373737; border: 1px solid gray; color: #EEEEEC; border-radius: 2px;}")
+        lineedit_desc.setStyleSheet(gnome_theme)
 
         button_allow = QPushButton("Allow")
+        button_allow.setObjectName("button_allow")
         button_allow.setFixedSize(120, 25)
-        button_allow.setStyleSheet("QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                                   QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B;}")
+        button_allow.setStyleSheet(gnome_theme)
 
         button_tmp = QPushButton("Temporary")
+        button_tmp.setObjectName("button_tmp")
         button_tmp.setFixedSize(120, 25)
-        button_tmp.setStyleSheet("QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                                   QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B;}")
+        button_tmp.setStyleSheet(gnome_theme)
 
         button_block = QPushButton("Block")
+        button_block.setObjectName("button_block")
         button_block.setFixedSize(120, 25)
-        button_block.setStyleSheet("QPushButton:hover {background-color: #282828; border: 1px solid #1B1B1B; border-radius: 2px;}\
-                                   QPushButton {background-color: #373737; color: #EEEEEC;border: 1px solid #1B1B1B;}")
+        button_block.setStyleSheet(gnome_theme)
 
         # Connection des buttons
         button_allow.clicked.connect(lambda: self.action_allow(id, serial, lineedit_desc, user))
@@ -135,11 +147,46 @@ class MainWindow(QWidget):
         # Fermeture de la pop-up
         app.quit()
 
+    def read_theme(self):
+
+        # Lecture et récupération du theme dans le fichier de conf
+        config = configparser.ConfigParser()
+        config.read("/etc/usbguard/usbguard-manager.ini")
+        theme = config.get("Settings", "theme")
+
+        if theme != "dark" and theme != "light":
+            theme="dark"
+
+        gnome_theme = open(f"/etc/usbguard/themes/{theme}/gnome-{theme}-popup.css").read()
+
+        return gnome_theme, theme
+
+    def read_screen_size(self):
+
+        # Lecture et récupération du theme dans le fichier de conf
+        config = configparser.ConfigParser()
+        config.read("/etc/usbguard/usbguard-manager.ini")
+        width = int(config.get("Settings", "width"))
+        height = int(config.get("Settings", "height"))
+
+        return width, height
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet())
 
     window = MainWindow()
+
+    # Récuperation du theme
+    config = configparser.ConfigParser()
+    config.read("/etc/usbguard/usbguard-manager.ini")
+    theme = config.get("Settings", "theme")
+
+    if theme == 'light':
+        color = 'F6F5F4'
+    else:
+        color = '353535'
+
     window.setWindowIcon(QIcon("icones/usbguard.png"))
-    window.setStyleSheet(f"background-color: #353535;")
+    window.setStyleSheet(f"background-color: #{color};")
     sys.exit(app.exec_())

@@ -19,16 +19,14 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Récupère les informations de l'écran principal et affiche la fenetre au centre
-        screen_info = QDesktopWidget().screenGeometry()
-        screen_width = screen_info.width()
-        screen_height = screen_info.height()
+        # Récupère les informations de l'écran principal
+        width, height = read_screen_size()
 
         window_width = self.width()
         window_height = self.height()
 
-        x = (screen_width - window_width) // 2
-        y = (screen_height - window_height) // 2
+        x = (width - window_width) // 2
+        y = (height - window_height) // 2
 
         self.move(x, y)
         self.setFixedSize(700, 360)
@@ -189,7 +187,7 @@ def zone_2_allow(self):
         self.button_mod_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button
-        image_path = f"./themes/{theme}/modifier.png"
+        image_path = f"/etc/usbguard/themes/{theme}/modifier.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_mod_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_mod_dict[i].setIcon(QIcon(pixmap))
@@ -212,7 +210,7 @@ def zone_2_allow(self):
         self.button_del_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button de suppresion
-        image_path = f"./themes/{theme}/supprimer.png"
+        image_path = f"/etc/usbguard/themes/{theme}/supprimer.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_del_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_del_dict[i].setIcon(QIcon(pixmap))
@@ -356,7 +354,7 @@ def zone_2_block(self):
         self.button_add_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button d'ajout permanent
-        image_path = f"./themes/{theme}/add.png"
+        image_path = f"/etc/usbguard/themes/{theme}/add.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_add_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_add_dict[i].setIcon(QIcon(pixmap))
@@ -380,7 +378,7 @@ def zone_2_block(self):
         self.button_tmp_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button d'ajout temporaire
-        image_path = f"./themes/{theme}/add_tmp.png"
+        image_path = f"/etc/usbguard/themes/{theme}/add_tmp.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_tmp_dict[i].setIcon(QIcon(pixmap))
@@ -407,7 +405,8 @@ def zone_2_block(self):
             line.setObjectName(f"line")
             line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
- # Comblement des buttons
+
+    # Comblement des buttons
     value = (len(self.button_add_dict))
     while value < 4:
         label = QLabel(f"")
@@ -535,7 +534,7 @@ def zone_2_tmp(self):
         self.button_add_tmp_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button ajout
-        image_path = f"./themes/{theme}/add.png"
+        image_path = f"/etc/usbguard/themes/{theme}/add.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_add_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_add_tmp_dict[i].setIcon(QIcon(pixmap))
@@ -559,7 +558,7 @@ def zone_2_tmp(self):
         self.button_rmv_dict[i].setStyleSheet(gnome_theme)
 
         # Ajout de l'icone du button de suppresion
-        image_path = f"./themes/{theme}/supprimer.png"
+        image_path = f"/etc/usbguard/themes/{theme}/supprimer.png"
         pixmap = QPixmap(image_path)
         pixmap = pixmap.scaled(self.button_rmv_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_rmv_dict[i].setIcon(QIcon(pixmap))
@@ -641,7 +640,7 @@ def action_modif_desc_allow(self):
     self.qline_dict[sender.property("position")].returnPressed.connect(self.button_mod_dict[sender.property("position")].click)
 
     # Modification de l'icone du button_mod
-    image_path = f"./themes/{theme}/verifier.png"
+    image_path = f"/etc/usbguard/themes/{theme}/verifier.png"
     pixmap = QPixmap(image_path)
     pixmap = pixmap.scaled(self.button_mod_dict[sender.property("position")].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
     self.button_mod_dict[sender.property("position")].setIcon(QIcon(pixmap))
@@ -788,15 +787,25 @@ def read_theme():
 
     # Lecture et récupération du theme dans le fichier de conf
     config = configparser.ConfigParser()
-    config.read("usbguard-manager.ini")
+    config.read("/etc/usbguard/usbguard-manager.ini")
     theme = config.get("Settings", "theme")
-    
+
     if theme != "dark" and theme != "light":
         theme="dark"
 
-    gnome_theme = open(f"./themes/{theme}/gnome-{theme}.css").read()
+    gnome_theme = open(f"/etc/usbguard/themes/{theme}/gnome-{theme}.css").read()
 
     return gnome_theme, theme
+
+def read_screen_size():
+
+    # Lecture et récupération du theme dans le fichier de conf
+    config = configparser.ConfigParser()
+    config.read("/etc/usbguard/usbguard-manager.ini")
+    width = int(config.get("Settings", "width"))
+    height = int(config.get("Settings", "height"))
+
+    return width, height
 
 if __name__ == "__main__":
     app = QApplication([])
@@ -807,7 +816,7 @@ if __name__ == "__main__":
 
     # Récuperation du theme
     config = configparser.ConfigParser()
-    config.read("usbguard-manager.ini")
+    config.read("/etc/usbguard/usbguard-manager.ini")
     theme = config.get("Settings", "theme")
 
     if theme == 'light':
@@ -818,7 +827,7 @@ if __name__ == "__main__":
     # Configuration du style de la fenêtre
     window.setWindowTitle("USBGuard-Manager")
     window.setStyleSheet(f"background-color: #{color};")
-    window.setWindowIcon(QIcon("./themes/usbguard.png"))
+    window.setWindowIcon(QIcon("/etc/usbguard/themes/usbguard.png"))
 
     window.show()
     sys.exit(app.exec_())

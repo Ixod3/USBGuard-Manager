@@ -1,0 +1,42 @@
+QLabel#label_serial{
+    color: #EEEEEC;
+}
+QLabel#label_id{
+    color: #EEEEEC;
+}
+QLineEdit#lineedit_desc {
+    background-color: #373737;
+    border: 1px solid gray;
+    color: #EEEEEC;
+    border-radius: 2px;
+}
+QPushButton#button_allow:hover {
+    background-color: #282828;
+    border: 1px solid #1B1B1B;
+    border-radius: 2px;
+}
+QPushButton#button_allow {
+    background-color: #373737;
+    color: #EEEEEC;
+    border: 1px solid #1B1B1B;
+}
+QPushButton#button_tmp:hover {
+    background-color: #282828;
+    border: 1px solid #1B1B1B;
+    border-radius: 2px;
+}
+QPushButton#button_tmp {
+    background-color: #373737;
+    color: #EEEEEC;
+    border: 1px solid #1B1B1B;
+}
+QPushButton#button_block:hover {
+    background-color: #282828;
+    border: 1px solid #1B1B1B;
+    border-radius: 2px;
+}
+QPushButton#button_block {
+    background-color: #373737;
+    color: #EEEEEC;
+    border: 1px solid #1B1B1B;
+}
