@@ -21,7 +21,6 @@ else
         mkdir /etc/usbguard/themes
     fi
 
-    # Verifier si le dossier existe
     cp -r ./themes/* /etc/usbguard/themes/
 
     # Gestion des droits
