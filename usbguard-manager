@@ -237,8 +237,23 @@ def zone_2_allow(self):
             line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
 
-    # Comblement des buttons
+    # List vide
     value = (len(self.button_mod_dict))
+
+    if value == 0:
+        value = 4
+        label = QLabel(f"")
+        label.setFixedSize(280, 80)
+        self.zone2_layout.addWidget(label, 0, 0)
+        label = QLabel(f"Empty list")
+        label.setStyleSheet("font-weight: bold;")
+        self.zone2_layout.addWidget(label, 1, 1, 1, 1)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 2, 0)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 3, 0)
+    
+    # Comblement des buttons
     while value < 4:
         label = QLabel(f"")
         self.zone2_layout.addWidget(label, value, 0)
@@ -406,8 +421,23 @@ def zone_2_block(self):
             line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
 
-    # Comblement des buttons
+    # List vide
     value = (len(self.button_add_dict))
+
+    if value == 0:
+        value = 4
+        label = QLabel(f"")
+        label.setFixedSize(280, 80)
+        self.zone2_layout.addWidget(label, 0, 0)
+        label = QLabel(f"Empty list")
+        label.setStyleSheet("font-weight: bold;")
+        self.zone2_layout.addWidget(label, 1, 1, 1, 1)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 2, 0)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 3, 0)
+    
+    # Comblement des buttons
     while value < 4:
         label = QLabel(f"")
         self.zone2_layout.addWidget(label, value, 0)
@@ -585,8 +615,23 @@ def zone_2_tmp(self):
             line.setStyleSheet(gnome_theme)
             self.zone2_layout.addWidget(line, i, 0, 2, 5)
 
-    # Comblement des buttons
+    # List vide
     value = (len(self.button_add_tmp_dict))
+
+    if value == 0:
+        value = 4
+        label = QLabel(f"")
+        label.setFixedSize(280, 80)
+        self.zone2_layout.addWidget(label, 0, 0)
+        label = QLabel(f"Empty list")
+        label.setStyleSheet("font-weight: bold;")
+        self.zone2_layout.addWidget(label, 1, 1, 1, 1)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 2, 0)
+        label = QLabel(f"")
+        self.zone2_layout.addWidget(label, 3, 0)
+
+    # Comblement des buttons
     while value < 4:
         label = QLabel(f"")
         self.zone2_layout.addWidget(label, value, 0)

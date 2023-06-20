@@ -8,7 +8,6 @@ The default comment of each device is "Default", it's recommand to change it to 
 
 - "Insuffisante right" banner
 - Date of last connexion for each device
-- Message "empty list"
 - Refresh list (3 sec)
 - Rewrite log send to /var/log/syslog by udev script
 
