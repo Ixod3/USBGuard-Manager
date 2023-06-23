@@ -22,7 +22,7 @@ sudo apt install usbguard python3-pip
 Install :
 
 ```sh
-git clone git@github.com:Ixod3/USBGuard-Manager."zzgit
+git clone git@github.com:Ixod3/USBGuard-Manager.git
 cd USBGuard-Manager
 sudo ./setup.sh
 ```
