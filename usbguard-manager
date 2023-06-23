@@ -221,7 +221,7 @@ def zone_2_allow(self):
         self.button_del_dict[i].setProperty("serial", (serial))
         self.button_del_dict[i].setProperty("id", (id))
 
-        # Ajout d'une action au button de modification
+        # Ajout d'une action au button de suppression
         self.button_del_dict[i].clicked.connect(lambda: action_del_allow(self))
         self.zone2_layout.addWidget(self.button_del_dict[i], i, 4)
 
@@ -337,20 +337,18 @@ def zone_2_block(self):
 
         # Description par default
         desc = "Blocked Device"
-        
+
         # Ajout des labels
         label_id = QLabel(f"ID : {id}")
         label_id.setFixedSize(104,30)
         label_id.setObjectName("label_id")
         label_id.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_id, i, 0)
-
         label_serial = QLabel(f"S/N : {serial_short}")
         label_serial.setFixedSize(135,30)
         label_serial.setObjectName("label_serial")
         label_serial.setStyleSheet(gnome_theme)
         self.zone2_layout.addWidget(label_serial, i, 1)
-
         desc = QLineEdit(f"{desc}")
         desc.setEnabled(False)
         desc.setObjectName("desc")
@@ -360,7 +358,7 @@ def zone_2_block(self):
 
         # Déclaration du qlineedit dans self
         self.qline_dict[i] = desc
-            
+
         # Ajout du bouton de modification
         self.button_add_dict[i] = QPushButton()
         self.button_add_dict[i].setFixedWidth(40)
@@ -398,17 +396,17 @@ def zone_2_block(self):
         pixmap = pixmap.scaled(self.button_tmp_dict[i].size(), aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
         self.button_tmp_dict[i].setIcon(QIcon(pixmap))
         self.button_tmp_dict[i].setIconSize(self.button_tmp_dict[i].size())
-    
+
         # Ajout d'une propriété personnalisé
         self.button_tmp_dict[i].setProperty("position", (i))
         self.button_tmp_dict[i].setProperty("serial", (serial))
         self.button_tmp_dict[i].setProperty("id", (id))
         self.button_tmp_dict[i].setProperty("device", block_device[i+1].split(" ", 2)[2])
-    
+
         # Ajout d'une action au button d'ajout temporaire
         self.button_tmp_dict[i].clicked.connect(lambda: action_tmp_block(self))
         self.zone2_layout.addWidget(self.button_tmp_dict[i], i, 4)
-    
+
         # Ajout d'un espacement vertical de 40 pixels entre chaque ligne
         self.zone2_layout.setVerticalSpacing(40)
 
@@ -423,7 +421,6 @@ def zone_2_block(self):
 
     # List vide
     value = (len(self.button_add_dict))
-
     if value == 0:
         value = 4
         label = QLabel(f"")
@@ -436,13 +433,13 @@ def zone_2_block(self):
         self.zone2_layout.addWidget(label, 2, 0)
         label = QLabel(f"")
         self.zone2_layout.addWidget(label, 3, 0)
-    
+
     # Comblement des buttons
     while value < 4:
         label = QLabel(f"")
         self.zone2_layout.addWidget(label, value, 0)
         value += 1
-    
+        
     # Création de la zone de défilement
     self.scroll_area = QScrollArea()
     self.scroll_area.setObjectName(f"scroll_area")
@@ -450,7 +447,7 @@ def zone_2_block(self):
     self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
     self.scroll_area.setWidgetResizable(True)
     self.scroll_area.setWidget(self.zone2_content)
-        
+
     # Création des widgets pour les zones
     self.zone2 = QWidget()
     self.zone2.setStyleSheet("background: None;")
@@ -463,7 +460,7 @@ def zone_2_block(self):
     self.scroll_bar.setObjectName(f"scroll_bar")
     self.scroll_bar.setStyleSheet(gnome_theme)
     self.scroll_bar.setSingleStep(24)
-        
+
     # Configuration du layout principal
     self.main_layout.addWidget(self.zone2)
 

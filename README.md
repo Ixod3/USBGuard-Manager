@@ -8,8 +8,8 @@ The default comment of each device is "Default", it's recommand to change it to 
 
 - "Insuffisante right" banner
 - Date of last connexion for each device
-- Refresh list (3 sec)
 - Rewrite log send to /var/log/syslog by udev script
+- uninstall script
 
 ## Install
 
@@ -22,7 +22,7 @@ sudo apt install usbguard python3-pip
 Install :
 
 ```sh
-git clone git@github.com:Ixod3/USBGuard-Manager.git
+git clone git@github.com:Ixod3/USBGuard-Manager."zzgit
 cd USBGuard-Manager
 sudo ./setup.sh
 ```
