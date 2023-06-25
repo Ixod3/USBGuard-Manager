@@ -6,7 +6,6 @@ if [ "$(id -u)" != "0" ]; then
 else
     # Installation de la base du theme
     /usr/bin/pip3 install qdarkstyle
-    /usr/bin/pip3 install pyqt5
 
     # Deplacer les fichiers de conf
     cp ./usbguard-manager.ini /etc/usbguard/usbguard-manager.ini
@@ -53,6 +52,8 @@ else
     height=$(echo "$resolution" | awk -F'x' '{print $2}')
     sed -i "s/\(height=\).*/\1$height/" /etc/usbguard/usbguard-manager.ini
     sed -i "s/\(width=\).*/\1$width/" /etc/usbguard/usbguard-manager.ini
+
+    echo "Done !"
 
     exit 0
 fi

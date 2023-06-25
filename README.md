@@ -16,7 +16,7 @@ The default comment of each device is "Default", it's recommand to change it to 
 Prerequis :
 
 ```sh
-sudo apt install usbguard python3-pip
+sudo apt install usbguard python3-pip python3-pyqt5
 ```
 
 Install :
