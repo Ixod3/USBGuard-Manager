@@ -32,3 +32,7 @@ Remove setup folder :
 ```sh
 rm -rf ../USBGuard-Manager
 ```
+
+## Change Dark to light theme
+
+- Change "theme" value in /etc/usbguard/usbguard-manager.ini (dark or light)
