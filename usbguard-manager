@@ -10,7 +10,7 @@ import sys
 import subprocess
 import qdarkstyle
 import configparser
-from PyQt5.QtWidgets import QFrame, QDesktopWidget, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
+from PyQt5.QtWidgets import QFrame, QApplication, QMainWindow, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QLabel, QGridLayout
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import *
