@@ -9,7 +9,6 @@ The default comment of each device is "Default", it's recommand to change it to 
 - "Insuffisante right" banner
 - Date of last connexion for each device
 - Rewrite log send to /var/log/syslog by udev script
-- uninstall script
 
 ## Install
 
@@ -31,6 +30,12 @@ Remove setup folder :
 
 ```sh
 rm -rf ../USBGuard-Manager
+```
+
+## Uninstall
+
+```sh
+sudo /etc/usbguard/uninstall-manager.sh
 ```
 
 ## Change Dark to light theme

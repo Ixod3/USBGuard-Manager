@@ -1,9 +1,12 @@
 #/usr/bin/bash
 
 if [ "$(id -u)" != "0" ]; then
+
     echo "Use root right to launch this script"
     exit 1
+
 else
+
     # Installation de la base du theme
     /usr/bin/pip3 install qdarkstyle
 
@@ -11,6 +14,7 @@ else
     cp ./usbguard-manager.ini /etc/usbguard/usbguard-manager.ini
     cp ./usbguard-manager-popup-halt.sh /etc/usbguard/usbguard-manager-popup-halt.sh
     cp ./usbguard-manager-popup-launch.sh /etc/usbguard/usbguard-manager-popup-launch.sh
+    cp ./uninstall-manager.sh /etc/usbguard/uninstall-manager.sh
     cp ./usbguard-manager /usr/bin/usbguard-manager
     cp ./usbguard-manager-popup /usr/bin/usbguard-manager-popup
     cp 80-usbguard-manager.rules /etc/udev/rules.d/80-usbguard-manager.rules
@@ -42,6 +46,9 @@ else
 
     chown root:root /etc/usbguard/usbguard-manager.ini
     chmod 644 /etc/usbguard/usbguard-manager.ini
+
+    chown root:root /etc/usbguard/uninstall-manager.sh
+    chmod 700 /etc/usbguard/uninstall-manager.sh
 
     # Restart udev service
     systemctl restart udev
