@@ -1,5 +1,7 @@
 # USBGuard-Manager
 
+## Not maintained
+
 This pyqt app is a GUI for usbguard tool. The objective is to democratize the control of USB keys on linux machines.
 
 The default comment of each device is "Default", it's recommand to change it to identify each device.
